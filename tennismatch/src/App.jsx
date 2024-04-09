@@ -12,6 +12,7 @@ import Login from './components/Login';
 import Join from './components/Join';
 import SuccessfulJoin from './components/SuccessfulJoin';
 import SuccessfulLogin from './components/SuccessfulLogin';
+import Admin from './components/Admin'; // Import the Admin component
 import './App.css'; 
 
 const App = () => { const [user, setUser] = useState(null);
@@ -33,6 +34,7 @@ const App = () => { const [user, setUser] = useState(null);
           <Route path="/join" element={<Join />} />
           <Route path="/join/success" element={<SuccessfulJoin />} />
           <Route path="/login/success" element={<SuccessfulLogin />} />
+          <Route path="/admin" element={<Admin />} /> {/* Admin route */}
           {/* You can add more routes here as needed */}
         </Routes>
         </div>

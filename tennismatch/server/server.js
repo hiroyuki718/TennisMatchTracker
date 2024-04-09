@@ -78,6 +78,35 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// Add this endpoint to serve user data
+app.get('/api/players', async (req, res) => {
+  try {
+    const result = await client.query('SELECT * FROM users;');
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ message: "Server error while fetching users." });
+  }
+});
+
+// Endpoint to delete a user by ID
+app.delete('/api/users/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Assuming you have authentication and authorization middleware to protect this route
+    const result = await client.query('DELETE FROM users WHERE id = $1 RETURNING *;', [id]);
+    if (result.rowCount > 0) {
+      res.json({ message: "User deleted successfully." });
+    } else {
+      res.status(404).json({ message: "User not found." });
+    }
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(500).json({ message: "Server error while deleting user." });
+  }
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
