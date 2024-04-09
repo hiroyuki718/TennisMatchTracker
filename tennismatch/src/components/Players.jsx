@@ -1,13 +1,36 @@
-// File: /src/components/Users.jsx
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const Players = () => {
+  const [players, setPlayers] = useState([]);
+
+  useEffect(() => {
+    const fetchPlayers = async () => {
+      try {
+        const response = await fetch('/api/players'); // Adjust the URL to your API endpoint
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setPlayers(data);
+      } catch (error) {
+        console.error("Could not fetch players:", error);
+      }
+    };
+
+    fetchPlayers();
+  }, []);
+
   return (
     <div>
       <h1>Players</h1>
       <p>Here's a list of users registered on our platform.</p>
-      {/* You might fetch and map over user data here */}
+      <ul>
+        {players.map(player => (
+          <li key={player.id}>
+            {player.username} - {player.email}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };

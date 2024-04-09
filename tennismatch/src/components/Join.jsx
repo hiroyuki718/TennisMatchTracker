@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+// File: /src/components/Join.jsx
+
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const Join = () => {

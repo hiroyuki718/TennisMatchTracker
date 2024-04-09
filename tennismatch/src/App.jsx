@@ -1,7 +1,8 @@
 // File: /src/App.jsx
 
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { UserContext } from './UserContext'; // Import the context
 
 import Navigation from './Navigation';
 import Home from './components/Home';
@@ -9,11 +10,17 @@ import About from './components/About';
 import Players from './components/Players';
 import Login from './components/Login';
 import Join from './components/Join';
+import SuccessfulJoin from './components/SuccessfulJoin';
+import SuccessfulLogin from './components/SuccessfulLogin';
+import './App.css'; 
 
-const App = () => {
+const App = () => { const [user, setUser] = useState(null);
   return (
+   
+    <UserContext.Provider value={{ user, setUser }}>
     <Router>
-      <div>
+      
+    <div className="container">
         {/* Navigation bar */}
         <Navigation />
 
@@ -24,10 +31,13 @@ const App = () => {
           <Route path="/players" element={<Players />} />
           <Route path="/login" element={<Login />} />
           <Route path="/join" element={<Join />} />
+          <Route path="/join/success" element={<SuccessfulJoin />} />
+          <Route path="/login/success" element={<SuccessfulLogin />} />
           {/* You can add more routes here as needed */}
         </Routes>
-      </div>
+        </div>
     </Router>
+    </UserContext.Provider>
   );
 };
 
