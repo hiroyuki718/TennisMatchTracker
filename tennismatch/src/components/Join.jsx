@@ -1,7 +1,7 @@
 // File: /src/components/Join.jsx
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Join = () => {
     const [formData, setFormData] = useState({
@@ -14,6 +14,8 @@ const Join = () => {
     const { username, email, password, confirmPassword } = formData;
 
     const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
+
+    const navigate = useNavigate();
 
     const onSubmit = async e => {
         e.preventDefault();
@@ -35,6 +37,7 @@ const Join = () => {
         const data = await response.json();
         console.log(data);
         // Handle response data, errors, and redirection here
+        navigate('/join/success');
     };
 
     return (

@@ -107,6 +107,19 @@ app.delete('/api/users/:id', async (req, res) => {
   }
 });
 
+app.post('/api/submit-score', async (req, res) => {
+  const { playerId, matchId, score } = req.body;
+
+  try {
+    // Insert score submission logic here. Example:
+    const result = await client.query('INSERT INTO scores(player_id, match_id, score) VALUES($1, $2, $3) RETURNING *;', [playerId, matchId, score]);
+    res.json({ message: "Score submitted successfully.", submittedScore: result.rows[0] });
+  } catch (error) {
+    console.error('Error submitting score:', error);
+    res.status(500).json({ message: "Server error while submitting score." });
+  }
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
