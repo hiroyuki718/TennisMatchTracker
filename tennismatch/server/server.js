@@ -10,7 +10,8 @@ const jwt = require('jsonwebtoken'); // Added for JWT token generation
 
 const app = express();
 const corsOptions = {
-  origin: 'http://localhost:5174', // or use process.env.CORS_ORIGIN if you have it set in your .env file
+  origin: 'http://localhost:5173', // Adjust this to match your frontend's origin
+  credentials: true, // This is important for cookies, authorization headers with HTTPS
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 app.use(cors(corsOptions)); // Changed to use environment variable for CORS origin
@@ -27,14 +28,38 @@ client.connect(err => { // Added error handling for database connection
   }
 });
 
+// Middleware to verify JWT token
+const verifyToken = (req, res, next) => {
+  const token = req.headers['authorization'];
+
+  if (!token) {
+    return res.status(403).json({ message: "No token provided." });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.userId = decoded.userId;
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: "Unauthorized!" });
+  }
+};
+
 // Registration route
 app.post('/register', async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    // Check if user exists
-    const user = await client.query('SELECT * FROM users WHERE username = $1', [username]);
+    // Check if user already exists
+    const userExists = await client.query('SELECT * FROM users WHERE username = $1', [username]);
     
+    if (userExists.rows.length > 0) {
+      // User already exists, return an error
+      return res.status(400).json({ message: "User already exists." });
+    } else {
+      // No user found, proceed with registration
+      const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
+      // Insert the new user into the database
     if (user.rows.length > 0) {
       const isValid = await bcrypt.compare(password, user.rows[0].hashed_password);
       if (isValid) {
@@ -118,6 +143,11 @@ app.post('/api/submit-score', async (req, res) => {
     console.error('Error submitting score:', error);
     res.status(500).json({ message: "Server error while submitting score." });
   }
+});
+
+// Apply the middleware to a route
+app.get('/api/protected-route', verifyToken, (req, res) => {
+  res.json({ message: "Welcome to the protected route!" });
 });
 
 const PORT = process.env.PORT || 3001;

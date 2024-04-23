@@ -39,7 +39,7 @@ const ScoreSubmit = () => {
     <form onSubmit={onSubmit}>
       <label htmlFor="playerId">Player ID:</label>
       <input type="text" id="playerId" name="playerId" value={playerId} onChange={onChange} required />
-
+pu
       <label htmlFor="matchId">Match ID:</label>
       <input type="text" id="matchId" name="matchId" value={matchId} onChange={onChange} required />
 

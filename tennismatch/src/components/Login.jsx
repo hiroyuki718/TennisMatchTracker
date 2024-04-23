@@ -8,7 +8,8 @@ const Login = () => {
     username: '',
     password: ''
   });
-  
+  const [error, setError] = useState(''); // Added state for error handling
+
   const navigate = useNavigate(); // Hook from react-router-dom to redirect the user after login
 
   // Update form fields
@@ -22,25 +23,34 @@ const Login = () => {
     const { username, password } = formData;
 
     try {
-      // Make sure to replace the URL with the endpoint of your backend server
       const response = await fetch('http://localhost:3001/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ username, password }),
+        credentials: 'include'  // Needed if your backend sets HttpOnly cookies
       });
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
       const data = await response.json();
-      console.log(data);
-      // Handle successful login, such as storing the token and redirecting the user
+
+      if (response.ok) {
+        console.log(data);
+        // Handle successful login, such as storing the token and redirecting the user
+        navigate('/dashboard'); // Redirect to dashboard or another route on successful login
+      } else {
+        // Handle different types of errors based on status code or error message from server
+        if (response.status === 401) {
+          setError('Invalid credentials.'); // Specific message for invalid credentials
+        } else if (response.status === 404) {
+          setError('User not found.');
+        } else {
+          setError('Login failed: ' + data.message || 'An error occurred.');
+        }
+      }
     } catch (error) {
       console.error('Error during login:', error);
-      // Handle errors, such as displaying a message to the user
+      setError('Login failed: ' + error.message); // Generic error message for network issues or other errors
     }
   };
 
@@ -56,6 +66,7 @@ const Login = () => {
         
         <button type="submit">Login</button>
       </form>
+      {error && <p className="error">{error}</p>} {/* Display error message if any */}
       <p>
         Don't have an account? <Link to="/join">Join now</Link>
       </p>

@@ -6,7 +6,7 @@ const Players = () => {
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
-        const response = await fetch('/api/players'); // Adjust the URL to your API endpoint
+        const response = await fetch('http://localhost:3001/api/players'); // Adjusted URL
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
