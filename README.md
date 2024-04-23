@@ -17,7 +17,7 @@ Prerequisites
 What you need to install the software:
 
     Node.js
-    MongoDB or your choice of database
+    Postgresql or your choice of database
     Git
 
 Installing
@@ -68,7 +68,7 @@ Built With
 
     Node.js - The runtime server environment
     Express - The web framework used
-    MongoDB - The database platform
+    Postgresql - The database platform
 
 Contributing
 
