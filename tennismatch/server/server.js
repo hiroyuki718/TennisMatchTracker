@@ -60,23 +60,12 @@ app.post('/register', async (req, res) => {
       // No user found, proceed with registration
       const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
       // Insert the new user into the database
-    if (user.rows.length > 0) {
-      const isValid = await bcrypt.compare(password, user.rows[0].hashed_password);
-      if (isValid) {
-        // User authenticated, create and send token
-        const token = jwt.sign({ userId: user.rows[0].id }, process.env.JWT_SECRET, { expiresIn: '1h' }); // JWT token generation logic
-        res.json({ token });
-      } else {
-        // Passwords don't match
-        res.status(400).json({ message: "Invalid credentials." });
-      }
-    } else {
-      // No user found with this username
-      res.status(400).json({ message: "User does not exist." });
+      const newUser = await client.query('INSERT INTO users(username, hashed_password) VALUES($1, $2) RETURNING *;', [username, hashedPassword]);
+      res.status(201).json({ message: "User registered successfully.", user: newUser.rows[0] });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error during login.", error: error.message }); // Enhanced error message
+    res.status(500).json({ message: "Server error during registration." });
   }
 });
 
